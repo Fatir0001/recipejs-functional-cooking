@@ -1,4 +1,4 @@
-/* Reset & Base Styles */
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -38,7 +38,7 @@ main {
     padding: 0 1rem;
 }
 
-/* Recipe Cards Grid */
+/* Recipe Container */
 #recipe-container {
     display: flex;
     flex-wrap: wrap;
@@ -80,7 +80,7 @@ main {
     line-height: 1.5;
 }
 
-/* Difficulty badges */
+/* Difficulty Badges */
 .difficulty {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
