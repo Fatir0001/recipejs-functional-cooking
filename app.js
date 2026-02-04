@@ -1,29 +1,61 @@
+(() => {
+
 const recipes = [
-  { id: 1, title: "Creamy Garlic Pasta", time: 25, difficulty: "easy", description: "Quick creamy pasta.", category: "pasta" },
-  { id: 2, title: "Veg Stir Fry", time: 20, difficulty: "easy", description: "Healthy veggies.", category: "veg" },
-  { id: 3, title: "Chicken Biryani", time: 70, difficulty: "hard", description: "Spicy rice dish.", category: "curry" },
-  { id: 4, title: "Butter Chicken", time: 60, difficulty: "medium", description: "Creamy curry.", category: "curry" },
-  { id: 5, title: "Caesar Salad", time: 15, difficulty: "easy", description: "Fresh salad.", category: "salad" },
-  { id: 6, title: "Paneer Tikka", time: 40, difficulty: "medium", description: "Grilled paneer.", category: "starter" },
-  { id: 7, title: "Lasagna", time: 80, difficulty: "hard", description: "Layered pasta.", category: "pasta" },
-  { id: 8, title: "Thai Green Curry", time: 50, difficulty: "medium", description: "Thai curry.", category: "curry" }
+ {id:1,title:"Pasta",ingredients:["tomato","cheese"]},
+ {id:2,title:"Pizza",ingredients:["flour","cheese"]},
+ {id:3,title:"Salad",ingredients:["lettuce","carrot"]},
+ {id:4,title:"Burger",ingredients:["bun","patty"]}
 ];
 
-const recipeContainer = document.querySelector("#recipe-container");
+const container = document.getElementById("recipeContainer");
+const searchInput = document.getElementById("searchInput");
+const counter = document.getElementById("recipeCounter");
+const favBtn = document.getElementById("showFavoritesBtn");
 
-const createRecipeCard = (recipe) => `
-  <div class="recipe-card" data-id="${recipe.id}">
-    <h3>${recipe.title}</h3>
-    <div class="recipe-meta">
-      <span>⏱️ ${recipe.time} min</span>
-      <span class="difficulty ${recipe.difficulty}">${recipe.difficulty}</span>
-    </div>
-    <p>${recipe.description}</p>
-  </div>
-`;
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+let showFav = false;
 
-const renderRecipes = (recipes) => {
-  recipeContainer.innerHTML = recipes.map(createRecipeCard).join("");
-};
+searchInput.addEventListener("input", render);
+favBtn.addEventListener("click", () => {
+  showFav = !showFav;
+  render();
+});
 
-renderRecipes(recipes);
+function render() {
+  container.innerHTML = "";
+  let list = [...recipes];
+
+  const text = searchInput.value.toLowerCase();
+  list = list.filter(r => r.title.toLowerCase().includes(text));
+
+  if(showFav){
+    list = list.filter(r => favorites.includes(r.id));
+  }
+
+  list.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${r.title}</h3>
+      <button>${favorites.includes(r.id) ? "❤️" : "🤍"}</button>
+    `;
+
+    div.querySelector("button").onclick = () => toggle(r.id);
+    container.appendChild(div);
+  });
+
+  counter.textContent = `Showing ${list.length} of ${recipes.length}`;
+}
+
+function toggle(id){
+  favorites.includes(id)
+    ? favorites = favorites.filter(f=>f!==id)
+    : favorites.push(id);
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  render();
+}
+
+render();
+
+})();
